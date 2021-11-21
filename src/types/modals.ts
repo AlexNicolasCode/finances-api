@@ -1,4 +1,5 @@
 export interface AuthUserDataType {
+    name?: string
     email: string
     password: string
 }
@@ -10,6 +11,10 @@ export interface UserType {
     finances: Finance[]
     createdAt: String
 } 
+
+export interface UserNoSecretData {
+    name?: String
+}
 
 export interface Finance {
     user: UserType
