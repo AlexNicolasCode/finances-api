@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
+
 import { AppModule } from '../../src/app.module';
-import { AuthUserDataType } from 'src/types/modals';
+import { AuthUserDataType } from '../../src/types';
 
 describe('RegisterController (e2e)', () => {
   let app: INestApplication;
@@ -17,7 +18,8 @@ describe('RegisterController (e2e)', () => {
   });
 
   it('/register', async () => {
-    const userData: AuthUserDataType = {    
+    const userData: AuthUserDataType = { 
+      name: "test",   
       email: `${Math.random() * 10000}`,
       password: `${Math.random() * 10000}`
     }
@@ -30,7 +32,7 @@ describe('RegisterController (e2e)', () => {
       .then((res) => {
         textResult = res.text
       })
-    
+
     return expect(textResult.startsWith("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9")).toBe(true)
   });
 
