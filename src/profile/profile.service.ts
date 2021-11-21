@@ -6,14 +6,24 @@ import { AuthUserDataType, UserNoSecretData } from '../types/modals';
 
 @Injectable()
 export class ProfileService {
-  async getUserProfile(token): Promise<UserNoSecretData | String> {
-    if (!token) return '{"error":"Invalid user"}'
+  async isInvalidUser(token: string): Promise<Boolean> {
+    if (!token) return true
 
-    const userDataDecoded = decodeToken(token) as AuthUserDataType;
-    if (!userDataDecoded) return '{"error":"Invalid user"}'
+    const userDataDecoded = this.getDecodedUser(token);
+    if (!userDataDecoded) return true
 
     const userDataFromDB: UserNoSecretData = await prisma.user.findFirst({ where: { email: userDataDecoded.email }}); 
-    if (!userDataFromDB) return '{"error":"Invalid user"}'
+    if (!userDataFromDB) return true
+  }
+
+  getDecodedUser(token: string): AuthUserDataType {
+    return decodeToken(token) as AuthUserDataType;
+  }
+
+  async getUserProfile(token: string): Promise<UserNoSecretData | String> {
+    if (await this.isInvalidUser(token)) return '{"error":"Invalid user"}'
+
+    const userDataFromDB: UserNoSecretData = await prisma.user.findFirst({ where: { email: this.getDecodedUser(token).email }}); 
 
     return await {
       name: userDataFromDB.name ?? ""
