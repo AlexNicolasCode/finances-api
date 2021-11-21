@@ -16,8 +16,8 @@ describe('RegisterController', () => {
 
   describe('root', () => {
     it('should return a string', async () => {
-
       const RegisterResult = await registerController.createAccount({
+        name: "user",
         email: `${Math.random() * 10000}`,
         password: "kdsak",
       });
@@ -25,8 +25,8 @@ describe('RegisterController', () => {
     });
 
     it('should return a undefined', async () => {
-
       const RegisterResult = await registerController.createAccount({
+        name: "user",
         email: `aaaa`,
         password: "kdsak",
       });
