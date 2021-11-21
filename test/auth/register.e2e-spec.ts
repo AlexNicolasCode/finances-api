@@ -17,7 +17,8 @@ describe('RegisterController (e2e)', () => {
   });
 
   it('/register', async () => {
-    const userData: AuthUserDataType = {    
+    const userData: AuthUserDataType = { 
+      name: "test",   
       email: `${Math.random() * 10000}`,
       password: `${Math.random() * 10000}`
     }
@@ -30,7 +31,7 @@ describe('RegisterController (e2e)', () => {
       .then((res) => {
         textResult = res.text
       })
-    
+
     return expect(textResult.startsWith("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9")).toBe(true)
   });
 
