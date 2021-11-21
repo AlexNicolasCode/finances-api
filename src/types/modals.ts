@@ -5,15 +5,15 @@ export interface AuthUserDataType {
 }
 
 export interface UserType {
-    name?: String
-    email: String
-    password: String
-    finances: Finance[]
-    createdAt: String
+    name?: string
+    email: string
+    password: string
+    finances?: Finance[]
+    createdAt: string
 } 
 
 export interface UserNoSecretData {
-    name?: String
+    name?: string
 }
 
 export interface Finance {
