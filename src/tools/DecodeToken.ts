@@ -1,5 +1,5 @@
 import * as jwt from 'jsonwebtoken';
-import { UserNoSecretData } from 'src/types/modals';
+import { UserNoSecretData } from '../types';
 
 export const decodeToken = (token: string) => {
     try {

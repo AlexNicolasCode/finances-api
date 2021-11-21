@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
+
 import { AppModule } from '../../src/app.module';
-import { AuthUserDataType } from 'src/types/modals';
+import { AuthUserDataType } from '../../src/types';
 
 describe('RegisterController (e2e)', () => {
   let app: INestApplication;
