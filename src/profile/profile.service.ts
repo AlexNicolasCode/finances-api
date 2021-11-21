@@ -1,9 +1,10 @@
-import { User } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 
+import { encondePassword } from '../auth/encode-password';
+import { UserType } from '../types/modals';
 import { prisma } from '../services/prisma';
 import { decodeToken } from '../tools/DecodeToken';
-import { AuthUserDataType, UserNoSecretData, UserType } from '../types/modals';
+import { AuthUserDataType, MessageType, UserNoSecretData } from '../types';
 
 @Injectable()
 export class ProfileService {
@@ -47,5 +48,18 @@ export class ProfileService {
       name: user.name,
       email: user.email,
     } as UserType
+  }
+
+  async deleteProfile(token: string, user: AuthUserDataType): Promise<MessageType | string> {
+    if (await this.isInvalidUser(token)) return '{"error":"Invalid user"}';
+
+    const up = await prisma.user.deleteMany({ 
+      where: {
+        email: user.email,
+        password: encondePassword(user.password),
+      }
+    });
+
+    return await this.getUserData(token) ? { message: "Invalid user" } : { message: "user deleted" }
   }
 }
