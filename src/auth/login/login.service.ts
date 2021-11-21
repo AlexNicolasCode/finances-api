@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { prisma } from '../../services/prisma';
 import { getToken } from '../get-token';
 import { encondePassword } from '../encode-password';
-import { AuthUserDataType } from 'src/types/modals';
+import { AuthUserDataType } from '../../types';
 
 @Injectable()
 export class LoginService {
