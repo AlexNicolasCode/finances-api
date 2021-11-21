@@ -7,12 +7,13 @@ import { AuthUserDataType } from 'src/types/modals';
 
 @Injectable()
 export class RegisterService {
-  async createAccount({ email, password }: AuthUserDataType): Promise<string> {
+  async createAccount({ name, email, password }: AuthUserDataType): Promise<string> {
     
     if (await prisma.user.findFirst({ where: { email: email }})) return '{"error":"Invalid user"}'
 
     await prisma.user.create({ 
       data: {
+        name: name,
         email: email,
         password: encondePassword(password),
         createdAt: String(new Date)
