@@ -73,4 +73,37 @@ describe('LoginController (e2e)', () => {
       
     return expect(textResult).toBe('{"name":"test"}')
   });
+
+  it('update user in /profile', async () => {
+    const userData: AuthUserDataType = { 
+      name: "test",   
+      email: `${Math.random() * 10000}`,
+      password: `${Math.random() * 10000}`
+    }
+
+    let token: string;
+    await request(app.getHttpServer())
+      .post('/register')
+      .send(userData)
+      .expect(201)
+      .then((res) => {
+        token = res.text
+      })
+
+
+    let textResult: UserNoSecretData;
+    await request(app.getHttpServer())
+      .patch('/profile')
+      .set(
+        'Authorization', 
+        token
+      )
+      .send({ name: "potato" })
+      .expect(200)  
+      .then((res) => {
+        textResult = res.text as UserNoSecretData
+      })
+      
+    return expect(textResult).toBe(`{\"name\":\"potato\",\"email\":\"${userData.email}\"}`)
+  });
 });
