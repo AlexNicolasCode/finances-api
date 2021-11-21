@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserNoSecretData } from 'src/types/modals';
+
+import { MessageType, UserNoSecretData } from '../types';
 import { RegisterController } from '../auth/register/register.controller';
 import { RegisterService } from '../auth/register/register.service';
 import { ProfileController } from './profile.controller';
@@ -58,6 +59,22 @@ describe('ProfileController', () => {
 
       const profileResult = await profileController.updateProfile({ name: "potato" }, { authorization: token, }) as UserNoSecretData;
       expect(profileResult.name).toBe("potato")
+    });
+
+    it('delete profile', async () => {
+      const token = await registerController.createAccount({
+        name: "user",
+        email: "testing.delete.profilke",
+        password: "kdsak"
+      });
+
+      const profileResult = await profileController.deleteProfile(
+        { email: "testing.delete.profilke", password: "kdsak" }, 
+        { authorization: token, }
+      ) as MessageType;
+
+      expect(profileResult.message).toBe("user deleted")
+      expect(await profileController.getUserProfile({ authorization: token })).toBe("{\"error\":\"Invalid user\"}")
     });
   });
 });

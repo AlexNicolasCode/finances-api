@@ -3,9 +3,9 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 
 import { AppModule } from '../../src/app.module';
-import { AuthUserDataType, UserNoSecretData } from 'src/types/modals';
+import { AuthUserDataType, UserNoSecretData } from '../../src/types';
 
-describe('LoginController (e2e)', () => {
+describe('ProfileController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -105,5 +105,69 @@ describe('LoginController (e2e)', () => {
       })
       
     return expect(textResult).toBe(`{\"name\":\"potato\",\"email\":\"${userData.email}\"}`)
+  });
+
+  it('delete user in /profile', async () => {
+    const userData: AuthUserDataType = { 
+      name: "test",   
+      email: `${Math.random() * 10000}`,
+      password: `${Math.random() * 10000}`
+    }
+
+    let token: string;
+    await request(app.getHttpServer())
+      .post('/register')
+      .send(userData)
+      .expect(201)
+      .then((res) => {
+        token = res.text
+    })
+
+    let textResult: string;
+    await request(app.getHttpServer())
+      .delete('/profile')
+      .set(
+        'Authorization', 
+        token
+      )
+      .send({ email: userData.email, password: userData.password })
+      .expect(200)  
+      .then((res) => {
+        textResult = res.text as string
+      })
+      
+    return expect(textResult).toBe("{\"message\":\"user deleted\"}")
+  });
+
+  it('delete user in /profile', async () => {
+    const userData: AuthUserDataType = { 
+      name: "test",   
+      email: `${Math.random() * 10000}`,
+      password: `${Math.random() * 10000}`
+    }
+
+    let token: string;
+    await request(app.getHttpServer())
+      .post('/register')
+      .send(userData)
+      .expect(201)
+      .then((res) => {
+        token = res.text
+    })
+
+    let textResult: string;
+    await request(app.getHttpServer())
+      .delete('/profile')
+      .set(
+        'Authorization', 
+        token
+      )
+      .send({ email: "not-email", password: userData.password })
+      .expect(200)  
+      .then((res) => {
+        textResult = res.text as string
+      })
+      
+    return expect(textResult).toBe("{\"message\":\"Invalid user\"}")
   });
 });
