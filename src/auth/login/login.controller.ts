@@ -1,14 +1,21 @@
-import { Body, Controller, Post } from '@nestjs/common';
-
-import { AuthUserDataType } from '../../types';
-import { LoginService } from './login.service';
+import { Controller, Inject, Post } from '@nestjs/common';
+import { Authentication } from 'src/domain/usecases';
+import { EmailValidation } from 'src/validation/validators';
 
 @Controller('login')
 export class LoginController {
-  constructor(private readonly appService: LoginService) {}
+  constructor(
+    @Inject('AUTHENTICATION') private readonly authentication: Authentication,
+    @Inject('EMAIL_VALIDATION') private readonly emailValidation: EmailValidation
+  ) {}
 
   @Post()
-  async loginUser(@Body() userData: { email: string, password: string }): Promise<string> {
-    return await this.appService.loginUser(userData as AuthUserDataType);
+  async handle({ email, password }: Authentication.Params): Promise<Authentication.Result | Error> {
+    const { isValid, error } = this.emailValidation.validate(email)
+    if (!isValid) {
+      return error
+    }
+    const auth = await this.authentication.auth({ email, password })
+    return { accessToken: auth.accessToken }
   }
 }

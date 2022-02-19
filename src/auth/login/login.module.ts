@@ -1,10 +1,24 @@
 import { Module } from '@nestjs/common';
+import { makeDbAuthentication, makeLoginValidation } from 'src/main/factories/usecases';
 import { LoginController } from './login.controller';
-import { LoginService } from './login.service';
+
+const authenticationFactory = {
+  provide: 'AUTHENTICATION',
+  useFactory: () => {
+    return makeDbAuthentication()
+  }
+}
+
+const emailValidationFactory = {
+  provide: 'EMAIL_VALIDATION',
+  useFactory: (email: string) => {
+    return makeLoginValidation(email)
+  }
+}
 
 @Module({
   imports: [],
   controllers: [LoginController],
-  providers: [LoginService],
+  providers: [authenticationFactory, emailValidationFactory],
 })
 export class LoginModule {}
