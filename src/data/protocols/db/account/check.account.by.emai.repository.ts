@@ -1,4 +1,4 @@
-export interface CheckAccountByEmailRepostiry {
+export interface CheckAccountByEmailRepository {
     checkByEmail: (email: string) => Promise<CheckAccountByEmailRepository.Result>
 }
 
