@@ -1,13 +1,23 @@
-import { LoadAccountByEmailRepository } from "src/data/protocols";
 import { prisma } from ".";
 
-export class AccountRepository implements LoadAccountByEmailRepository {
+import { CheckAccountByEmailRepository, LoadAccountByEmailRepository } from "src/data/protocols";
+
+export class AccountRepository implements LoadAccountByEmailRepository, CheckAccountByEmailRepository {
     async loadByEmail (email: string): Promise<LoadAccountByEmailRepository.Result> {
         const account = await prisma.user.findUnique({
             where: {
-                email: email
+                email
             }
         })
         return account
+    }
+
+    async checkByEmail (email: string): Promise<CheckAccountByEmailRepository.Result> {
+        const account = await prisma.user.findUnique({
+            where: {
+                email
+            }
+        })
+        return account !== null
     }
 }
