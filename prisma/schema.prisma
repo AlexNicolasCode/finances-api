@@ -7,23 +7,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model MonthlyFinance {
-  id           Int    @id @default(autoincrement())
-  month        String
-  userId       Int
-  currentMoney Float
-  outgoing     Float
-  rent         Float
-  User         User   @relation(fields: [userId], references: [id])
-}
-
 model User {
   id             Int              @id @default(autoincrement())
   email          String           @unique
-  name           String?
   password       String
-  createdAt      String
-  MonthlyFinance MonthlyFinance[]
-
-  @@unique([email, password])
+  createdAt      DateTime         @default(now())
 }
