@@ -1,6 +1,7 @@
 import { Controller, Inject, Post } from '@nestjs/common';
 import { AddAccount, Authentication } from 'src/domain/usecases';
-import { Validator } from 'src/presentation/protocols';
+import { ok } from 'src/presentation/helpers';
+import { HttpResponse, Validator } from 'src/presentation/protocols';
 
 @Controller('signup')
 export class SignUpController {
@@ -11,7 +12,7 @@ export class SignUpController {
   ) {}
 
   @Post()
-  async handle({ email, password }: Authentication.Params): Promise<Authentication.Result | Error> {
+  async handle({ email, password }: Authentication.Params): Promise<HttpResponse> {
     try {
         const { error } = this.validation.validate(email)
         if (error) {
@@ -28,7 +29,7 @@ export class SignUpController {
             email, 
             password
         })
-        return { accessToken: auth.accessToken }
+        return ok({ accessToken: auth.accessToken })
     } catch(e) {
         return new Error('Internal server error')
     }
