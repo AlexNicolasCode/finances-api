@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 import { HashComparer, Hasher } from "src/data/protocols";
 
