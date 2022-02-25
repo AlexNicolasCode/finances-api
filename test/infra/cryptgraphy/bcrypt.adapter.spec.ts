@@ -7,6 +7,10 @@ jest.mock('bcrypt', () => ({
     async hash (): Promise<string> {
         return 'hash'
     },
+
+    async compare (): Promise<string> {
+        return 'compare'
+    }
 }))
 
 type SutType = {
@@ -45,10 +49,21 @@ describe('BcryptAdapter', () => {
         test('Should throw if hash throws', async () => {
             const { sut } = makeSut()
             jest.spyOn(bcrypt, 'hash').mockImplementationOnce(throwError)
-            
+
             const promise = sut.hash('any_value')
 
             expect(promise).rejects.toThrow()
+        })
+    })
+
+    describe('compare()', () => {
+        test('Should call compare with correct params', async () => {
+            const { sut } = makeSut()
+            const compareSpy = jest.spyOn(bcrypt, 'compare')
+
+            await sut.compare('any_value', 'any_hash')
+
+            expect(compareSpy).toHaveBeenCalledWith('any_value', 'any_hash')
         })
     })
 })
