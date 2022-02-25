@@ -20,7 +20,7 @@ const makeSut = (): JwtAdapter => {
 
 describe('JwtAdapter', () => {
     describe('sign()', () => {
-        test('Should call jwt.sign with params', async () => {
+        test('Should call jwt.sign with correct params', async () => {
             const sut = makeSut()
             const signSpy = jest.spyOn(jwt, 'sign')
 
@@ -44,6 +44,17 @@ describe('JwtAdapter', () => {
             const promise = sut.encrypt('any_id')
 
             expect(promise).rejects.toThrow()
+        })
+    })
+
+    describe('verify()', () => {
+        test('Should call jwt.verify with correct params', async () => {
+            const sut = makeSut()
+            const verifySpy = jest.spyOn(jwt, 'verify')
+
+            await sut.decrypt('any_token')
+
+            expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret')
         })
     })
 })
