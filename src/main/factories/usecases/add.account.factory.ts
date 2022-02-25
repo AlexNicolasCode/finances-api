@@ -2,7 +2,7 @@ import { DbAddAccount } from "src/data/usecases";
 import { AddAccount } from "src/domain/usecases";
 import { BycryptApapter } from "src/infra/cryptography";
 import { PrismaAdapter } from "src/infra/db";
-import { AccountRepository } from "src/infra/db/account.repository";
+import { AccountRepository } from "src/infra/db";
 
 export const makeDbAddAccount = (): AddAccount => {
     const salt = 12
