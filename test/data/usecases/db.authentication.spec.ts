@@ -5,6 +5,7 @@ import { EncrypterSpy, HashComparerSpy, LoadAccountByEmailRepositorySpy } from "
 type SutTypes = {
     sut: DbAuthentication
     hashComparer: HashComparerSpy
+    loadAccountByEmailRepository: LoadAccountByEmailRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
@@ -14,7 +15,8 @@ const makeSut = (): SutTypes => {
     const sut = new DbAuthentication(loadAccountByEmailRepository, hashComparer, encrypter) 
     return {
         sut,
-        hashComparer
+        hashComparer,
+        loadAccountByEmailRepository
     }
 }
 
@@ -36,5 +38,14 @@ describe('DbAuthentication usecase', () => {
         const promise = sut.auth(authAccountParams)
         
         expect(promise).rejects.toThrow()
+    })
+
+    test('Should call LoadAccountByEmailRepository with correct email', async () => {
+        const { sut, loadAccountByEmailRepository } = makeSut()
+        const authAccountParams = mockUserModel()
+        
+        await sut.auth(authAccountParams)
+        
+        expect(loadAccountByEmailRepository.email).toEqual(authAccountParams.email)
     })
 })
