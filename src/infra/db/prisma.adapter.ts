@@ -1,7 +1,8 @@
 import { PrismaClient } from ".prisma/client";
-import { LoadAccountByEmailRepository } from "src/data/protocols";
+import { AddAccountRepository, LoadAccountByEmailRepository } from "src/data/protocols";
+import { AddAccount } from "src/domain/usecases";
 
-export class PrismaAdapter implements LoadAccountByEmailRepository {
+export class PrismaAdapter implements LoadAccountByEmailRepository, AddAccountRepository {
     constructor (
         private readonly prisma = new PrismaClient()
     ) {}
@@ -11,5 +12,15 @@ export class PrismaAdapter implements LoadAccountByEmailRepository {
             where: { email }
         })
         return result
+    }
+
+    async add ({ email, password }: AddAccount.Params): Promise<AddAccount.Result> {
+        const accountResult = this.prisma.user.create({
+            data: {
+                email,
+                password
+            }
+        })
+        return accountResult ? true : false
     }
 }
