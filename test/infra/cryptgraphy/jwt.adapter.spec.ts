@@ -1,4 +1,3 @@
-import faker from '@faker-js/faker'
 import * as jwt from 'jsonwebtoken'
 
 import { JwtAdapter } from 'src/infra/cryptography'
