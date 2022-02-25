@@ -48,4 +48,15 @@ describe('DbAuthentication usecase', () => {
         
         expect(loadAccountByEmailRepository.email).toEqual(authAccountParams.email)
     })
+
+    test('Should return null if LoadAccountByEmailRepository not found account', async () => {
+        const { sut, loadAccountByEmailRepository } = makeSut()
+        const addAccountParamsMock = mockUserModel()
+        jest.spyOn(loadAccountByEmailRepository, 'loadByEmail').mockImplementationOnce(null)
+
+        const isValid = await sut.auth(addAccountParamsMock)
+
+        expect(isValid).toBeFalsy()
+    })
+    
 })
