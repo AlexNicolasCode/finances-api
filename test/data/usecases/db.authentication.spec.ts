@@ -32,7 +32,7 @@ describe('DbAuthentication usecase', () => {
         
         expect(hashComparer.plaintext).toBe(authAccountParams.password)
     })
-
+    
     test('Should throw if HashComparer throws', async () => {
         const { sut, hashComparer } = makeSut()
         const authAccountParams = mockUserModel()
@@ -42,7 +42,7 @@ describe('DbAuthentication usecase', () => {
         
         expect(promise).rejects.toThrow()
     })
-
+    
     test('Should call LoadAccountByEmailRepository with correct email', async () => {
         const { sut, loadAccountByEmailRepository } = makeSut()
         const authAccountParams = mockUserModel()
@@ -51,25 +51,35 @@ describe('DbAuthentication usecase', () => {
         
         expect(loadAccountByEmailRepository.email).toEqual(authAccountParams.email)
     })
-
+    
     test('Should return null if LoadAccountByEmailRepository not found account', async () => {
         const { sut, loadAccountByEmailRepository } = makeSut()
         const authAccountParams = mockUserModel()
         jest.spyOn(loadAccountByEmailRepository, 'loadByEmail').mockImplementationOnce(null)
-
+        
         const isValid = await sut.auth(authAccountParams)
-
+        
         expect(isValid).toBeFalsy()
     })
-
+    
     test('Should return access token on success', async () => {
         const { sut, encrypter } = makeSut()
         const authAccountParams = mockUserModel()
         const { accessToken } = mockAccessToken()
         encrypter.ciphertext = accessToken
-
+        
         const result = await sut.auth(authAccountParams)
-
+        
         expect(result).toStrictEqual({ accessToken })
+    })
+
+    test('Should throw if Encrypter throws', async () => {
+        const { sut, encrypter } = makeSut()
+        const authAccountParams = mockUserModel()
+        jest.spyOn(encrypter, 'encrypt').mockImplementationOnce(throwError)
+
+        const promise = sut.auth(authAccountParams)
+
+        await expect(promise).rejects.toThrow()
     })
 })
