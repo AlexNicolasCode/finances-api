@@ -6,6 +6,7 @@ type SutTypes = {
     sut: DbAddAccount
     hasherSpy: HasherSpy
     addAccountRepositorySpy: AddAccountRepositorySpy
+    checkAccountByEmailRepositorySpy: CheckAccountByEmailRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
@@ -16,7 +17,8 @@ const makeSut = (): SutTypes => {
     return {
         sut,
         hasherSpy,
-        addAccountRepositorySpy
+        addAccountRepositorySpy,
+        checkAccountByEmailRepositorySpy
     }
 }
 
@@ -75,6 +77,16 @@ describe('DbAddAccount usecase', () => {
         const { sut, addAccountRepositorySpy } = makeSut()
         const addAccountParamsMock = mockUserModel()
         addAccountRepositorySpy.result = false
+
+        const isValid = await sut.add(addAccountParamsMock)
+
+        expect(isValid).toBe(false)
+    })
+    
+    test('Should return false if CheckAccountByemailRepository returns true', async () => {
+        const { sut, checkAccountByEmailRepositorySpy } = makeSut()
+        const addAccountParamsMock = mockUserModel()
+        checkAccountByEmailRepositorySpy.result = true
 
         const isValid = await sut.add(addAccountParamsMock)
 
