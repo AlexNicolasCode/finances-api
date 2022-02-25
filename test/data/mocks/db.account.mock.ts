@@ -24,16 +24,13 @@ export class CheckAccountByEmailRepositorySpy implements CheckAccountByEmailRepo
 
 export class LoadAccountByEmailRepositorySpy implements LoadAccountByEmailRepository {
     email: string
-    result = {
-        id: faker.datatype.number(),
-        password: faker.internet.password()
-    }
-
+    
     async loadByEmail (email: string): Promise<LoadAccountByEmailRepository.Result> {
         this.email = email
         return {
-            ...this.result,
-            email: this.email
+            id: faker.datatype.number(),
+            email: this.email,
+            password: faker.internet.password()
         }
     }
 }
