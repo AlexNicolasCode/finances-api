@@ -49,6 +49,7 @@ describe('DbAddAccount usecase', () => {
         await sut.add(addAccountParamsMock)
 
         expect(addAccountRepositorySpy.params).toEqual({
+            id: addAccountParamsMock.id,
             email: addAccountParamsMock.email,
             password: hasherSpy.digest
         })
