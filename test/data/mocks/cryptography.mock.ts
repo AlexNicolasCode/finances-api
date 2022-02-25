@@ -1,6 +1,6 @@
 import faker from '@faker-js/faker'
 
-import { HashComparer, Hasher } from 'src/data/protocols'
+import { Encrypter, HashComparer, Hasher } from 'src/data/protocols'
 
 export class HasherSpy implements Hasher {
     digest = faker.datatype.uuid()
@@ -21,5 +21,15 @@ export class HashComparerSpy implements HashComparer {
         this.plaintext = plaintext
         this.digest = digest
         return this.isValid
+    }
+}
+
+export class EncrypterSpy implements Encrypter {
+    plaintext: string
+    ciphertext = faker.datatype.uuid()
+
+    async encrypt (plaintext: string): Promise<string> {
+        this.plaintext = plaintext
+        return this.ciphertext
     }
 }
