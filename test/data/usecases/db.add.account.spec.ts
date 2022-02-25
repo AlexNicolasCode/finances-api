@@ -5,6 +5,7 @@ import { AddAccountRepositorySpy, CheckAccountByEmailRepositorySpy, HasherSpy } 
 type SutTypes = {
     sut: DbAddAccount
     hasherSpy: HasherSpy
+    addAccountRepositorySpy: AddAccountRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
@@ -15,6 +16,7 @@ const makeSut = (): SutTypes => {
     return {
         sut,
         hasherSpy,
+        addAccountRepositorySpy
     }
 }
 
@@ -36,5 +38,17 @@ describe('DbAddAccount usecase', () => {
         const promise = sut.add(addAccountParamsMock)
 
         await expect(promise).rejects.toThrow()
+    })
+    
+    test('Should call AddAccountRepository with correct values', async () => {
+        const { sut, addAccountRepositorySpy, hasherSpy } = makeSut()
+        const addAccountParamsMock = mockUserModel() 
+
+        await sut.add(addAccountParamsMock)
+
+        expect(addAccountRepositorySpy.params).toEqual({
+            email: addAccountParamsMock.email,
+            password: hasherSpy.digest
+        })
     })
 })
