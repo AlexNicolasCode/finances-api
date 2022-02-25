@@ -62,6 +62,17 @@ describe('DbAuthentication usecase', () => {
         expect(isValid).toBeFalsy()
     })
     
+    
+    test('Should throw if LoadAccountByEmailRepository throws', async () => {
+        const { sut, loadAccountByEmailRepository } = makeSut()
+        const authAccountParams = mockUserModel()
+        jest.spyOn(loadAccountByEmailRepository, 'loadByEmail').mockImplementationOnce(throwError)
+        
+        const promise = sut.auth(authAccountParams)
+        
+        await expect(promise).rejects.toThrow()
+    })
+    
     test('Should return access token on success', async () => {
         const { sut, encrypter } = makeSut()
         const authAccountParams = mockUserModel()
