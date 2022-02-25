@@ -32,6 +32,16 @@ describe('DbAuthentication usecase', () => {
         
         expect(hashComparer.plaintext).toBe(authAccountParams.password)
     })
+
+    test('Should return null if HashComparer return false and password is incorrect', async () => {
+        const { sut, hashComparer } = makeSut()
+        const authAccountParams = mockUserModel()
+        hashComparer.isValid = false
+        
+        const isValid = await sut.auth(authAccountParams)
+        
+        expect(isValid).toBeNull()
+    })
     
     test('Should throw if HashComparer throws', async () => {
         const { sut, hashComparer } = makeSut()
