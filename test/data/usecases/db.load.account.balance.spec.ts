@@ -92,4 +92,12 @@ describe('DbLoadAccountBalance', () => {
 
         expect(result).toBeUndefined()
     })
+
+    test('Should return AccountBalance on success', async () => {
+        const { sut, loadAccountBalanceByEmailRepositorySpy } = makeSut()
+
+        const result = await sut.load({ accessToken: 'any_token' })
+
+        expect(result).toBe(loadAccountBalanceByEmailRepositorySpy.result)
+    })
 })
