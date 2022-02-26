@@ -1,6 +1,12 @@
 import faker from "@faker-js/faker";
 
-import { AddAccountRepository, CheckAccountByEmailRepository, LoadAccountByEmailRepository } from "src/data/protocols";
+import { 
+    AddAccountRepository, 
+    CheckAccountByEmailRepository, 
+    LoadAccountByAccessTokenRepository, 
+    LoadAccountByEmailRepository
+} from "src/data/protocols";
+import { mockUserModel } from "test/domain/mocks";
 
 export class AddAccountRepositorySpy implements AddAccountRepository {
     params: AddAccountRepository.Params
@@ -32,5 +38,15 @@ export class LoadAccountByEmailRepositorySpy implements LoadAccountByEmailReposi
             email: this.email,
             password: faker.internet.password()
         }
+    }
+}
+
+export class LoadAccountByAccessTokenRepositorySpy implements LoadAccountByAccessTokenRepository {
+    token: string
+    user = mockUserModel()
+
+    async loadByAccessToken (token: string): Promise<LoadAccountByAccessTokenRepository.Result> {
+        this.token = token
+        return this.user
     }
 }
