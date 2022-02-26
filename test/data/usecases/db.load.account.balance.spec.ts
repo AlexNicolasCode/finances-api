@@ -62,7 +62,7 @@ describe('DbLoadAccountBalance', () => {
         expect(spy).toBeCalledWith('any_token')
     })
 
-    test('Should call loadByEmail on loadAccountByAccessTokenRepositorySpy with correct email', async () => {
+    test('Should call loadByEmail on loadAccountBalanceByEmailRepositorySpy with correct email', async () => {
         const { 
             sut, 
             loadAccountByAccessTokenRepositorySpy, 
@@ -73,5 +73,23 @@ describe('DbLoadAccountBalance', () => {
         await sut.load({ accessToken: 'any_token' })
 
         expect(spy).toBeCalledWith(loadAccountByAccessTokenRepositorySpy.user.email)
+    })
+
+    test('Should throw if loadAccountBalanceByEmailRepositorySpy throws', async () => {
+        const { sut, loadAccountBalanceByEmailRepositorySpy } = makeSut()
+        jest.spyOn(loadAccountBalanceByEmailRepositorySpy, 'loadByEmail').mockImplementationOnce(throwError)
+        
+        const promise = sut.load({ accessToken: 'any_token' })
+
+        expect(promise).rejects.toThrow()
+    })
+
+    test('Should return undefined if loadAccountBalanceByEmailRepositorySpy not found an account', async () => {
+        const { sut, loadAccountBalanceByEmailRepositorySpy } = makeSut()
+        jest.spyOn(loadAccountBalanceByEmailRepositorySpy, 'loadByEmail').mockImplementationOnce(() => undefined)
+
+        const result = await sut.load({ accessToken: 'any_token' })
+
+        expect(result).toBeUndefined()
     })
 })
