@@ -1,3 +1,5 @@
 export * from './load.account.by.email.repository'
 export * from './check.account.by.emai.repository'
 export * from './add.account.repository'
+export * from './load.account.by.access.token.repository'
+export * from './load.account.balance.by.email.repository'
