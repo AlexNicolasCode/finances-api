@@ -32,7 +32,7 @@ export class CheckAccountByEmailRepositorySpy implements CheckAccountByEmailRepo
 export class LoadAccountByEmailRepositorySpy implements LoadAccountByEmailRepository {
     email: string
     result = {
-        id: faker.datatype.uuid(),
+        id: faker.datatype.number(),
         password: faker.internet.password()
     }
     
