@@ -34,7 +34,6 @@ export class LoadAccountByEmailRepositorySpy implements LoadAccountByEmailReposi
     result = {
         id: faker.datatype.number(),
         password: faker.internet.password(),
-        accessToken: mockAccessToken().accessToken
     }
     
     async loadByEmail (email: string): Promise<LoadAccountByEmailRepository.Result> {

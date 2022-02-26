@@ -51,8 +51,7 @@ describe('DbAddAccount usecase', () => {
         expect(addAccountRepositorySpy.params).toEqual({
             id: addAccountParamsMock.id,
             email: addAccountParamsMock.email,
-            password: hasherSpy.digest,
-            accessToken: addAccountParamsMock.accessToken,
+            password: hasherSpy.digest
         })
     })
     
