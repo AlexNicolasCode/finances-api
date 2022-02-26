@@ -1,6 +1,7 @@
 import { LoadAccountBalance } from "src/domain/usecases"
 import { LoadAccountBalanceByEmail, LoadAccountByAccessTokenRepository } from "src/data/protocols"
 import { LoadAccountBalanceByEmailRepositorySpy, LoadAccountByAccessTokenRepositorySpy } from "../mocks"
+import { throwError } from "test/domain/mocks"
 
 class DbLoadAccountBalance implements LoadAccountBalance {
     constructor (
@@ -26,5 +27,15 @@ describe('DbLoadAccountBalance', () => {
         const result = await sut.load({ accessToken: 'any_token' })
 
         expect(result).toBeUndefined()
+    })
+    test('Should throw if loadAccountByAccessTokenRepository throws', async () => {
+        const loadAccountByAccessTokenRepositorySpy = new LoadAccountByAccessTokenRepositorySpy()
+        jest.spyOn(loadAccountByAccessTokenRepositorySpy, 'loadByAccessToken').mockImplementationOnce(throwError)
+        const loadAccountBalanceByEmailRepositorySpy = new LoadAccountBalanceByEmailRepositorySpy()
+        const sut = new DbLoadAccountBalance(loadAccountByAccessTokenRepositorySpy, loadAccountBalanceByEmailRepositorySpy)
+
+        const promise = sut.load({ accessToken: 'any_token' })
+
+        expect(promise).rejects.toThrow()
     })
 })
