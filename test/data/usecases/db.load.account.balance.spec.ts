@@ -28,6 +28,7 @@ describe('DbLoadAccountBalance', () => {
 
         expect(result).toBeUndefined()
     })
+
     test('Should throw if loadAccountByAccessTokenRepository throws', async () => {
         const loadAccountByAccessTokenRepositorySpy = new LoadAccountByAccessTokenRepositorySpy()
         jest.spyOn(loadAccountByAccessTokenRepositorySpy, 'loadByAccessToken').mockImplementationOnce(throwError)
@@ -37,5 +38,16 @@ describe('DbLoadAccountBalance', () => {
         const promise = sut.load({ accessToken: 'any_token' })
 
         expect(promise).rejects.toThrow()
+    })
+
+    test('Should call LoadAccountByAccessTokenRepositorySpy with correct params', async () => {
+        const loadAccountByAccessTokenRepositorySpy = new LoadAccountByAccessTokenRepositorySpy()
+        const spy = jest.spyOn(loadAccountByAccessTokenRepositorySpy, 'loadByAccessToken')
+        const loadAccountBalanceByEmailRepositorySpy = new LoadAccountBalanceByEmailRepositorySpy()
+        const sut = new DbLoadAccountBalance(loadAccountByAccessTokenRepositorySpy, loadAccountBalanceByEmailRepositorySpy)
+
+        await sut.load({ accessToken: 'any_token' })
+
+        expect(spy).toBeCalledWith('any_token')
     })
 })
