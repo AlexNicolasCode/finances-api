@@ -1,9 +1,9 @@
 import { AccountBalance } from "src/domain/models";
 
-export interface LoadAccountBalanceByEmail {
-    loadByEmail: (emai: string) => Promise<LoadAccountBalanceByEmail.Result>
+export interface LoadAccountBalanceById {
+    loadAccountBalanceById: (id: number) => Promise<LoadAccountBalanceById.Result>
 }
 
-export namespace LoadAccountBalanceByEmail {
+export namespace LoadAccountBalanceById {
     export type Result = AccountBalance
 }

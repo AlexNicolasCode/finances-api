@@ -3,7 +3,7 @@ import faker from "@faker-js/faker";
 import { 
     AddAccountRepository, 
     CheckAccountByEmailRepository, 
-    LoadAccountBalanceByEmail, 
+    LoadAccountBalanceById, 
     LoadAccountByAccessTokenRepository, 
     LoadAccountByEmailRepository
 } from "src/data/protocols";
@@ -55,12 +55,12 @@ export class LoadAccountByAccessTokenRepositorySpy implements LoadAccountByAcces
     }
 }
 
-export class LoadAccountBalanceByEmailRepositorySpy implements LoadAccountBalanceByEmail {
-    email: string
+export class LoadAccountBalanceByIdRepositorySpy implements LoadAccountBalanceById {
+    id: number
     result = mockAccountBalance()
 
-    async loadByEmail (email: string): Promise<LoadAccountBalanceByEmail.Result> {
-        this.email = email
+    async loadAccountBalanceById (id: number): Promise<LoadAccountBalanceById.Result> {
+        this.id = id
         return this.result
     }
 }
