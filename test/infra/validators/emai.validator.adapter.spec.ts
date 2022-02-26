@@ -2,6 +2,12 @@ import * as validator from 'validator'
 
 import { EmailValidatorAdapter } from "src/infra/validators"
 
+jest.mock('validator', () => ({
+    isEmail (): boolean {
+        return true
+    }
+}))
+
 const makeSut = (): EmailValidatorAdapter => {
     return new EmailValidatorAdapter()
 }
