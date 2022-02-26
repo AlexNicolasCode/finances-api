@@ -1,1 +1,2 @@
-export * from './auth/auth.module'
+export * from './auth'
+export * from './account'
