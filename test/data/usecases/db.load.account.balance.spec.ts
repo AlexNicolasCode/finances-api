@@ -16,13 +16,28 @@ class DbLoadAccountBalance implements LoadAccountBalance {
     }
 }
 
+type SutType = {
+    sut: LoadAccountBalance 
+    loadAccountByAccessTokenRepositorySpy: LoadAccountByAccessTokenRepositorySpy
+    loadAccountBalanceByEmailRepositorySpy: LoadAccountBalanceByEmailRepositorySpy
+}
+
+const makeSut = (): SutType => {
+    const loadAccountByAccessTokenRepositorySpy = new LoadAccountByAccessTokenRepositorySpy()
+    const loadAccountBalanceByEmailRepositorySpy = new LoadAccountBalanceByEmailRepositorySpy()
+    const sut = new DbLoadAccountBalance(loadAccountByAccessTokenRepositorySpy, loadAccountBalanceByEmailRepositorySpy)
+    return {
+        sut,
+        loadAccountByAccessTokenRepositorySpy,
+        loadAccountBalanceByEmailRepositorySpy,
+    }
+}
+
 
 describe('DbLoadAccountBalance', () => {
     test('Should return undefined if loadAccountByAccessTokenRepository not found an account', async () => {
-        const loadAccountByAccessTokenRepositorySpy = new LoadAccountByAccessTokenRepositorySpy()
+        const { sut, loadAccountByAccessTokenRepositorySpy } = makeSut()
         jest.spyOn(loadAccountByAccessTokenRepositorySpy, 'loadByAccessToken').mockImplementationOnce(() => undefined)
-        const loadAccountBalanceByEmailRepositorySpy = new LoadAccountBalanceByEmailRepositorySpy()
-        const sut = new DbLoadAccountBalance(loadAccountByAccessTokenRepositorySpy, loadAccountBalanceByEmailRepositorySpy)
 
         const result = await sut.load({ accessToken: 'any_token' })
 
@@ -30,24 +45,33 @@ describe('DbLoadAccountBalance', () => {
     })
 
     test('Should throw if loadAccountByAccessTokenRepository throws', async () => {
-        const loadAccountByAccessTokenRepositorySpy = new LoadAccountByAccessTokenRepositorySpy()
+        const { sut, loadAccountByAccessTokenRepositorySpy } = makeSut()
         jest.spyOn(loadAccountByAccessTokenRepositorySpy, 'loadByAccessToken').mockImplementationOnce(throwError)
-        const loadAccountBalanceByEmailRepositorySpy = new LoadAccountBalanceByEmailRepositorySpy()
-        const sut = new DbLoadAccountBalance(loadAccountByAccessTokenRepositorySpy, loadAccountBalanceByEmailRepositorySpy)
-
+        
         const promise = sut.load({ accessToken: 'any_token' })
 
         expect(promise).rejects.toThrow()
     })
 
     test('Should call LoadAccountByAccessTokenRepositorySpy with correct params', async () => {
-        const loadAccountByAccessTokenRepositorySpy = new LoadAccountByAccessTokenRepositorySpy()
+        const { sut, loadAccountByAccessTokenRepositorySpy } = makeSut()
         const spy = jest.spyOn(loadAccountByAccessTokenRepositorySpy, 'loadByAccessToken')
-        const loadAccountBalanceByEmailRepositorySpy = new LoadAccountBalanceByEmailRepositorySpy()
-        const sut = new DbLoadAccountBalance(loadAccountByAccessTokenRepositorySpy, loadAccountBalanceByEmailRepositorySpy)
 
         await sut.load({ accessToken: 'any_token' })
 
         expect(spy).toBeCalledWith('any_token')
+    })
+
+    test('Should call loadByEmail on loadAccountByAccessTokenRepositorySpy with correct email', async () => {
+        const { 
+            sut, 
+            loadAccountByAccessTokenRepositorySpy, 
+            loadAccountBalanceByEmailRepositorySpy
+        } = makeSut()
+        const spy = jest.spyOn(loadAccountBalanceByEmailRepositorySpy, 'loadByEmail')
+
+        await sut.load({ accessToken: 'any_token' })
+
+        expect(spy).toBeCalledWith(loadAccountByAccessTokenRepositorySpy.user.email)
     })
 })
