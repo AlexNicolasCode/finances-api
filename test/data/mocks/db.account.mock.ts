@@ -31,13 +31,16 @@ export class CheckAccountByEmailRepositorySpy implements CheckAccountByEmailRepo
 
 export class LoadAccountByEmailRepositorySpy implements LoadAccountByEmailRepository {
     email: string
+    result = {
+        id: faker.datatype.uuid(),
+        password: faker.internet.password()
+    }
     
     async loadByEmail (email: string): Promise<LoadAccountByEmailRepository.Result> {
         this.email = email
         return {
-            id: faker.datatype.uuid(),
-            email: this.email,
-            password: faker.internet.password()
+            ...this.result,
+            email
         }
     }
 }
@@ -54,9 +57,10 @@ export class LoadAccountByAccessTokenRepositorySpy implements LoadAccountByAcces
 
 export class LoadAccountBalanceByEmailRepositorySpy implements LoadAccountBalanceByEmail {
     email: string
+    result = mockAccountBalance()
 
     async loadByEmail (email: string): Promise<LoadAccountBalanceByEmail.Result> {
         this.email = email
-        return mockAccountBalance()
+        return this.result
     }
 }
