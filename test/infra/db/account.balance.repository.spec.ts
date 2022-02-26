@@ -44,4 +44,17 @@ describe('AccountBalanceRepository', () => {
 
         expect(promise).rejects.toThrow()
     })
+
+    test('Should call loadAccountBalanceById with correct id', async () => {
+        const {
+            sut,
+            loadAccountBalanceById,
+            userIdMock
+        } = makeSut()
+        const spy = jest.spyOn(loadAccountBalanceById, 'loadAccountBalanceById')
+
+        await sut.loadAccountBalanceById(userIdMock)
+
+        expect(spy).toBeCalledWith(userIdMock)
+    })
 })
