@@ -1,5 +1,6 @@
 import * as jwt from 'jsonwebtoken'
 
+import { Decrypter } from 'src/data/protocols'
 import { JwtAdapter } from 'src/infra/cryptography'
 import { throwError } from 'test/domain/mocks'
 
@@ -8,8 +9,8 @@ jest.mock('jsonwebtoken', () => ({
         return 'any_token'
     },
 
-    async verify (): Promise<string> {
-        return 'any_value'
+    async verify (): Promise<Decrypter.Result> {
+        return { email: 'any_value' }
     }
 }))
 
@@ -23,15 +24,15 @@ describe('JwtAdapter', () => {
             const sut = makeSut()
             const signSpy = jest.spyOn(jwt, 'sign')
 
-            await sut.encrypt('any_id')
+            await sut.encrypt('any_email')
 
-            expect(signSpy).toHaveBeenCalledWith({ id: 'any_id'}, 'secret', { expiresIn: 60 * 60 * 24 * 30 })
+            expect(signSpy).toHaveBeenCalledWith({ email: 'any_email' }, 'secret', { expiresIn: 60 * 60 * 24 * 30 })
         })
 
         test('Should return accessToken on success', async () => {
             const sut = makeSut()
 
-            const accessToken = await sut.encrypt('any_id')
+            const accessToken = await sut.encrypt('any_email')
 
             expect(accessToken).toBe('any_token')
         })
@@ -40,7 +41,7 @@ describe('JwtAdapter', () => {
             const sut = makeSut()
             jest.spyOn(jwt, 'sign').mockImplementationOnce(throwError)
 
-            const promise = sut.encrypt('any_id')
+            const promise = sut.encrypt('any_email')
 
             expect(promise).rejects.toThrow()
         })
@@ -61,7 +62,7 @@ describe('JwtAdapter', () => {
 
             const result = await sut.decrypt('any_token')
 
-            expect(result).toBe('any_value')
+            expect(result).toStrictEqual({ email: 'any_value' })
         })
         
         test('Should throws if verify method throws', async () => {

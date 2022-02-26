@@ -1,8 +1,13 @@
 import { PrismaClient } from ".prisma/client";
-import { AddAccountRepository, LoadAccountByEmailRepository } from "src/data/protocols";
+import { 
+    AddAccountRepository, 
+    LoadAccountBalanceById, 
+    LoadAccountByEmailRepository
+} from "src/data/protocols";
+import { AccountBalance } from "src/domain/models";
 import { AddAccount } from "src/domain/usecases";
 
-export class PrismaAdapter implements LoadAccountByEmailRepository, AddAccountRepository {
+export class PrismaAdapter implements LoadAccountByEmailRepository, AddAccountRepository, LoadAccountBalanceById {
     constructor (
         private readonly prisma = new PrismaClient()
     ) {}
@@ -22,5 +27,18 @@ export class PrismaAdapter implements LoadAccountByEmailRepository, AddAccountRe
             }
         })
         return accountResult ? true : false
+    }
+
+    async loadAccountBalanceById (id: number): Promise<AccountBalance> {
+        const accountBalance = await this.prisma.accountBalance.findUnique({
+            where: {
+                userId: id
+            }
+        })
+        return {
+            balance: accountBalance.balance,
+            income: accountBalance.income,
+            outgoing: accountBalance.outgoing,
+        }
     }
 }
