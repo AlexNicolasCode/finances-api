@@ -80,6 +80,18 @@ describe('DbLoadAccountBalance', () => {
 
             expect(promise).rejects.toThrow()
         })
+
+        test('Should return undefined if loadAccountByEmailSpy not found account', async () => {
+            const {
+                sut,
+                loadAccountByEmailSpy
+            } = makeSut()
+            jest.spyOn(loadAccountByEmailSpy, 'loadByEmail').mockImplementationOnce(() => undefined)
+
+            const promise = await sut.load({ accessToken: 'any_token' })
+
+            expect(promise).toBeUndefined()
+        })
     })
 
     describe('loadAccountBalanceByIdRepositorySpy', () => {
