@@ -7,7 +7,7 @@ import {
     LoadAccountByAccessTokenRepository, 
     LoadAccountByEmailRepository
 } from "src/data/protocols";
-import { mockAccountBalance, mockUserModel } from "test/domain/mocks";
+import { mockAccessToken, mockAccountBalance, mockUserModel } from "test/domain/mocks";
 
 export class AddAccountRepositorySpy implements AddAccountRepository {
     params: AddAccountRepository.Params
@@ -33,7 +33,8 @@ export class LoadAccountByEmailRepositorySpy implements LoadAccountByEmailReposi
     email: string
     result = {
         id: faker.datatype.number(),
-        password: faker.internet.password()
+        password: faker.internet.password(),
+        accessToken: mockAccessToken().accessToken
     }
     
     async loadByEmail (email: string): Promise<LoadAccountByEmailRepository.Result> {

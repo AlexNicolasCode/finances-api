@@ -1,9 +1,11 @@
-import { UserModel } from "src/domain/models";
-
 import { faker } from '@faker-js/faker'
 
+import { UserModel } from "src/domain/models"
+import { mockAccessToken } from "."
+
 export const mockUserModel = (): UserModel => ({
-    id: faker.datatype.uuid(),
+    id: faker.datatype.number(),
     email: faker.internet.email(),
-    password: faker.internet.password()
+    password: faker.internet.password(),
+    accessToken: mockAccessToken().accessToken
 })
