@@ -68,6 +68,18 @@ describe('DbLoadAccountBalance', () => {
             expect(spy).toBeCalledWith(decrypter.result.email)
             expect(spy).toBeCalledWith(decrypter.result.email)
         })
+
+        test('Should throw if loadAccountByEmail throws', async () => {
+            const {
+                sut,
+                loadAccountByEmailSpy
+            } = makeSut()
+            jest.spyOn(loadAccountByEmailSpy, 'loadByEmail').mockImplementationOnce(throwError)
+
+            const promise = sut.load({ accessToken: 'any_token' })
+
+            expect(promise).rejects.toThrow()
+        })
     })
 
     describe('loadAccountBalanceByIdRepositorySpy', () => {
