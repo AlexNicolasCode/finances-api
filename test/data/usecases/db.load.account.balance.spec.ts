@@ -26,7 +26,7 @@ const makeSut = (): SutType => {
 
 describe('DbLoadAccountBalance', () => {
     describe('decrypter', () => {
-        test('Should return undefined if decrypter not found email', async () => {
+        test('Should return undefined if not found email', async () => {
             const { sut, decrypter } = makeSut()
             jest.spyOn(decrypter, 'decrypt').mockImplementationOnce(() => undefined)
     
@@ -43,15 +43,15 @@ describe('DbLoadAccountBalance', () => {
     
             expect(promise).rejects.toThrow()
         })
-    })
 
-    test('Should call LoadAccountByEmailRepositorySpy with correct params', async () => {
-        const { sut, decrypter } = makeSut()
-        const spy = jest.spyOn(decrypter, 'decrypt')
-
-        await sut.load({ accessToken: 'any_token' })
-
-        expect(spy).toBeCalledWith('any_token')
+        test('Should call decrypter with correct params', async () => {
+            const { sut, decrypter } = makeSut()
+            const spy = jest.spyOn(decrypter, 'decrypt')
+    
+            await sut.load({ accessToken: 'any_token' })
+    
+            expect(spy).toBeCalledWith('any_token')
+        })
     })
 
     describe('LoadAccountByEmailSpy', () => {
