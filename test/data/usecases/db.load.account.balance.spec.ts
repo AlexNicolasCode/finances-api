@@ -1,65 +1,65 @@
 import { LoadAccountBalance } from "src/domain/usecases"
-import { LoadAccountBalanceByEmailRepositorySpy, LoadAccountByAccessTokenRepositorySpy } from "../mocks"
+import { DecrypterSpy, LoadAccountBalanceByEmailRepositorySpy } from "../mocks"
 import { throwError } from "test/domain/mocks"
 import { DbLoadAccountBalance } from "src/data/usecases"
 
 type SutType = {
     sut: LoadAccountBalance 
-    loadAccountByAccessTokenRepositorySpy: LoadAccountByAccessTokenRepositorySpy
+    decrypter: DecrypterSpy
     loadAccountBalanceByEmailRepositorySpy: LoadAccountBalanceByEmailRepositorySpy
 }
 
 const makeSut = (): SutType => {
-    const loadAccountByAccessTokenRepositorySpy = new LoadAccountByAccessTokenRepositorySpy()
+    const decrypter = new DecrypterSpy()
     const loadAccountBalanceByEmailRepositorySpy = new LoadAccountBalanceByEmailRepositorySpy()
-    const sut = new DbLoadAccountBalance(loadAccountByAccessTokenRepositorySpy, loadAccountBalanceByEmailRepositorySpy)
+    const sut = new DbLoadAccountBalance(decrypter, loadAccountBalanceByEmailRepositorySpy)
     return {
         sut,
-        loadAccountByAccessTokenRepositorySpy,
+        decrypter,
         loadAccountBalanceByEmailRepositorySpy,
     }
 }
 
 
 describe('DbLoadAccountBalance', () => {
-    test('Should return undefined if loadAccountByAccessTokenRepository not found an account', async () => {
-        const { sut, loadAccountByAccessTokenRepositorySpy } = makeSut()
-        jest.spyOn(loadAccountByAccessTokenRepositorySpy, 'loadByAccessToken').mockImplementationOnce(() => undefined)
+    test('Should return undefined if decrypter not found email', async () => {
+        const { sut, decrypter } = makeSut()
+        jest.spyOn(decrypter, 'decrypt').mockImplementationOnce(() => undefined)
 
         const result = await sut.load({ accessToken: 'any_token' })
 
         expect(result).toBeUndefined()
     })
 
-    test('Should throw if loadAccountByAccessTokenRepository throws', async () => {
-        const { sut, loadAccountByAccessTokenRepositorySpy } = makeSut()
-        jest.spyOn(loadAccountByAccessTokenRepositorySpy, 'loadByAccessToken').mockImplementationOnce(throwError)
+    test('Should throw if decrypter throws', async () => {
+        const { sut, decrypter } = makeSut()
+        jest.spyOn(decrypter, 'decrypt').mockImplementationOnce(throwError)
         
         const promise = sut.load({ accessToken: 'any_token' })
 
         expect(promise).rejects.toThrow()
     })
 
-    test('Should call LoadAccountByAccessTokenRepositorySpy with correct params', async () => {
-        const { sut, loadAccountByAccessTokenRepositorySpy } = makeSut()
-        const spy = jest.spyOn(loadAccountByAccessTokenRepositorySpy, 'loadByAccessToken')
+    test('Should call LoadAccountByEmailRepositorySpy with correct params', async () => {
+        const { sut, decrypter } = makeSut()
+        const spy = jest.spyOn(decrypter, 'decrypt')
 
         await sut.load({ accessToken: 'any_token' })
 
         expect(spy).toBeCalledWith('any_token')
     })
 
-    test('Should call loadByEmail on loadAccountBalanceByEmailRepositorySpy with correct email', async () => {
+    test('Should call decrypt on loadAccountBalanceByEmailRepositorySpy with correct email', async () => {
         const { 
             sut, 
-            loadAccountByAccessTokenRepositorySpy, 
+            decrypter, 
             loadAccountBalanceByEmailRepositorySpy
         } = makeSut()
         const spy = jest.spyOn(loadAccountBalanceByEmailRepositorySpy, 'loadByEmail')
 
         await sut.load({ accessToken: 'any_token' })
 
-        expect(spy).toBeCalledWith(loadAccountByAccessTokenRepositorySpy.user.email)
+        expect(spy).toBeCalledWith(decrypter.result.email)
     })
 
     test('Should throw if loadAccountBalanceByEmailRepositorySpy throws', async () => {
